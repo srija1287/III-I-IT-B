@@ -29,14 +29,14 @@ class Solution:
                 word_dict[j][match].add(i)
                 word_dict[i][match].add(j)
                 
-                #By adding match, we are giving weightage to word with most number of match with other words
+                
                 similar_count[i] += match
                 similar_count[j] += match
                     
-        #Initiate candidates
+        
         candidates = set(i for i in range(n))
         
-        #Find the next best candidate
+        
         def find_max_similar(candidates):
             index = -1
             max_count = -1
@@ -47,16 +47,16 @@ class Solution:
                     
             return index
 
-        ###Implement guesses
+        
         for i in range(10):
             #Get next best candidate to guess
             next_candidate = find_max_similar(candidates)
             match = master.guess(wordlist[next_candidate])
 
-            #Found the secret word
+            
             if match == 6:
                 return
             
-            #Eliminate the candidates
+            
             candidates = candidates.intersection(word_dict[next_candidate][match])
 
