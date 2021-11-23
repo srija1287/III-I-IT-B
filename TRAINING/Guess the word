@@ -1,0 +1,62 @@
+# code
+class Solution:
+    def findSecretWord(self, wordlist: List[str], master: 'Master') -> None:
+
+        #Count number of matched between 2 words
+        def count_match(word1, word2):
+            match = 0
+            for i in range(6):
+                if word1[i] == word2[i]:
+                    match += 1
+                    
+            return match
+        
+
+        
+        n = len(wordlist)
+        
+        word_dict = [defaultdict(set) for _ in range(n)]
+        
+        #Keep track of number of similar count, to select best candidate to eliminate as many candidates as possible
+        similar_count = [0 for _ in range(n)]
+        
+        
+        
+        for i, word in enumerate(wordlist):
+            
+            for j in range(i + 1, n):
+                match = count_match(wordlist[j], word)
+                word_dict[j][match].add(i)
+                word_dict[i][match].add(j)
+                
+                #By adding match, we are giving weightage to word with most number of match with other words
+                similar_count[i] += match
+                similar_count[j] += match
+                    
+        #Initiate candidates
+        candidates = set(i for i in range(n))
+        
+        #Find the next best candidate
+        def find_max_similar(candidates):
+            index = -1
+            max_count = -1
+            for c in candidates:
+                if similar_count[c] > max_count:
+                    index = c
+                    max_count = similar_count[c]
+                    
+            return index
+
+        ###Implement guesses
+        for i in range(10):
+            #Get next best candidate to guess
+            next_candidate = find_max_similar(candidates)
+            match = master.guess(wordlist[next_candidate])
+
+            #Found the secret word
+            if match == 6:
+                return
+            
+            #Eliminate the candidates
+            candidates = candidates.intersection(word_dict[next_candidate][match])
+
